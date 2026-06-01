@@ -45,6 +45,9 @@ pub fn build_tray(app: &AppHandle) -> tauri::Result<()> {
 
     TrayIconBuilder::with_id("main")
         .icon(icon)
+        // macOS menu-bar icons must be template images so the OS can tint them
+        // for light/dark bars; a raw colour icon renders washed-out or blank.
+        .icon_as_template(true)
         .menu(&menu)
         .show_menu_on_left_click(true)
         .on_menu_event(|app, event| match event.id().as_ref() {

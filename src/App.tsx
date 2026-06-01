@@ -11,6 +11,45 @@ type Settings = {
 
 type Status = { kind: "idle" | "ok" | "error" | "busy"; message: string };
 
+function SaveIcon() {
+  return (
+    <svg
+      className="icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+      <polyline points="17 21 17 13 7 13 7 21" />
+      <polyline points="7 3 7 8 15 8" />
+    </svg>
+  );
+}
+
+function Switch({
+  checked,
+  onChange,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <label className="switch">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.currentTarget.checked)}
+      />
+      <span className="track" />
+      <span className="thumb" />
+    </label>
+  );
+}
+
 function App() {
   const [testMode, setTestMode] = useState(true);
   const [intervalSecs, setIntervalSecs] = useState(60);
@@ -93,55 +132,51 @@ function App() {
         <p className="sub">Payment notifications in your tray</p>
       </header>
 
-      <label className="field">
-        <span>creem API key</span>
-        <input
-          type="password"
-          autoComplete="off"
-          placeholder={hasApiKey ? "•••••••• (saved — type to replace)" : "creem_…"}
-          value={apiKey}
-          onChange={(e) => setApiKey(e.currentTarget.value)}
-        />
-        {hasApiKey && (
-          <button className="link" type="button" onClick={clearKey}>
-            Remove saved key
+      <div className="card">
+        <label className="field">
+          <span>creem API key</span>
+          <input
+            type="password"
+            autoComplete="off"
+            placeholder={
+              hasApiKey ? "•••••••• (saved — type to replace)" : "creem_…"
+            }
+            value={apiKey}
+            onChange={(e) => setApiKey(e.currentTarget.value)}
+          />
+          {hasApiKey && (
+            <button className="link" type="button" onClick={clearKey}>
+              Remove saved key
+            </button>
+          )}
+        </label>
+
+        <div className="field row">
+          <span>Test mode</span>
+          <Switch checked={testMode} onChange={setTestMode} />
+        </div>
+
+        <label className="field">
+          <span>Poll interval (seconds)</span>
+          <input
+            type="number"
+            min={15}
+            value={intervalSecs}
+            onChange={(e) => setIntervalSecs(Number(e.currentTarget.value))}
+          />
+        </label>
+
+        <div className="field row">
+          <span>Start at login</span>
+          <Switch checked={autostart} onChange={setAutostart} />
+        </div>
+
+        <div className="field row">
+          <span>Notification sound</span>
+          <button type="button" className="secondary" onClick={playTestSound}>
+            ▶ Play
           </button>
-        )}
-      </label>
-
-      <label className="field row">
-        <span>Test mode</span>
-        <input
-          type="checkbox"
-          checked={testMode}
-          onChange={(e) => setTestMode(e.currentTarget.checked)}
-        />
-      </label>
-
-      <label className="field">
-        <span>Poll interval (seconds)</span>
-        <input
-          type="number"
-          min={15}
-          value={intervalSecs}
-          onChange={(e) => setIntervalSecs(Number(e.currentTarget.value))}
-        />
-      </label>
-
-      <label className="field row">
-        <span>Start at login</span>
-        <input
-          type="checkbox"
-          checked={autostart}
-          onChange={(e) => setAutostart(e.currentTarget.checked)}
-        />
-      </label>
-
-      <div className="field row">
-        <span>Notification sound</span>
-        <button type="button" className="secondary" onClick={playTestSound}>
-          ▶ Play
-        </button>
+        </div>
       </div>
 
       <div className="actions">
@@ -149,7 +184,8 @@ function App() {
           Test connection
         </button>
         <button type="button" onClick={save}>
-          Save
+          <SaveIcon />
+          Save Changes
         </button>
       </div>
 
